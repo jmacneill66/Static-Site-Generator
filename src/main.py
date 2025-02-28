@@ -66,13 +66,15 @@ def generate_page(from_path, template_path, dest_path, basepath):
     output_content = template_content.replace(
         "{{ Title }}", title).replace("{{ Content }}", html_content)
     output_content = output_content.replace('{{ Basepath }}', basepath)
+    output_content = output_content.replace('href="/', f'href="{basepath}')
+    output_content = output_content.replace('src="/', f'src="{basepath}')
 
     # Use regular expressions to replace any href or src that starts with /
-    import re
-    output_content = re.sub(
-        r'href="(/[^"]*)"', f'href="{basepath}\\1"', output_content)
-    output_content = re.sub(
-        r'src="(/[^"]*)"', f'src="{basepath}\\1"', output_content)
+    # import re
+    # output_content = re.sub(
+    #    r'href="(/[^"]*)"', f'href="{basepath}\\1"', output_content)
+    # output_content = re.sub(
+    #    r'src="(/[^"]*)"', f'src="{basepath}\\1"', output_content)
 
     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
     with open(dest_path, "w", encoding="utf-8") as f:
