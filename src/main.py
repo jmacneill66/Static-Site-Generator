@@ -63,7 +63,7 @@ def generate_page(from_path, template_path, dest_path, basepath):
         template_content = f.read()
     html_content = markdown_to_html_node(markdown_content).to_html()
     title = extract_title(markdown_content)
-    print(f"Basepath being used: {basepath}")
+    
 
     output_content = template_content.replace(
         "{{ Title }}", title).replace("{{ Content }}", html_content)
