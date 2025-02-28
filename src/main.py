@@ -1,8 +1,6 @@
 from operator import index
 from tempfile import template
-from textnode import *
 from md_to_html_node import *
-from htmlnode import *
 import shutil
 import os
 import sys
