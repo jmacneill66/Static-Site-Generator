@@ -67,6 +67,7 @@ def generate_page(from_path, template_path, dest_path, basepath):
 
     output_content = template_content.replace(
         "{{ Title }}", title).replace("{{ Content }}", html_content)
+    output_content = output_content.replace('{{ Basepath }}', basepath)
     output_content = output_content.replace('href="/', f'href="{basepath}')
     output_content = output_content.replace('src="/', f'src="{basepath}')
 
