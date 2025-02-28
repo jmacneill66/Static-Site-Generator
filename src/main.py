@@ -50,49 +50,12 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, bas
                 generate_page(from_path, template_path, dest_path, basepath)
 
 
-"""
-def generate_page(from_path, template_path, dest_path, basepath):
-    \""" Generates an HTML page using markdown and a template.\"""
-
-    print(
-        f"Generating page from {from_path} to {dest_path} using {template_path}")
-    print(f"Using basepath: {basepath}")
-
-    with open(from_path, "r", encoding="utf-8") as f:
-        markdown_content = f.read()
-    with open(template_path, "r", encoding="utf-8") as f:
-        template_content = f.read()
-    html_content = markdown_to_html_node(markdown_content).to_html()
-    title = extract_title(markdown_content)
-
-    html_content = apply_basepath(html_content, basepath)
-
-    # Replace template placeholders
-    # output_content = template_content.replace(
-    #    "{{ Title }}", title).replace("{{ Content }}", html_content)
-    # output_content = output_content.replace('{{ Basepath }}', basepath)
-
-    # Make sure basepath doesn't end with a slash for our replacements
-    clean_basepath = basepath
-    if clean_basepath.endswith('/'):
-        clean_basepath = clean_basepath[:-1]
-
-     # Replace template placeholders
-    output_content = template_content.replace(
-        "{{ Title }}", title).replace("{{ Content }}", html_content)
-
-    # Replace href="/" with href="/basepath/" (avoid double slashes)
-    # output_content = output_content.replace(
-    #    'href="/', f'href="{clean_basepath}/')
-    # output_content = output_content.replace(
-    #    'src="/', f'src="{clean_basepath}/')
-
-    def apply_basepath(html_content, basepath):
-    Apply basepath to all absolute links and src attributes, ensuring no doubling.
+def apply_basepath(html_content, basepath):
+    """Apply basepath to all absolute links and src attributes, ensuring no doubling."""
     # Remove trailing slash if present
     clean_basepath = basepath.rstrip('/')
 
-    # Check if we already have the basepath in links to avoid doubling  
+    # Check if we already have the basepath in links to avoid doubling
     if f'href="{clean_basepath}/' in html_content:
         print("WARNING: Basepath already present in links")
         return html_content
@@ -111,16 +74,9 @@ def generate_page(from_path, template_path, dest_path, basepath):
 
     return result
 
-    print(
-        f"Sample link after replacement: {output_content[output_content.find('<link'):output_content.find('>', output_content.find('<link'))+1]}")
-
-    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-    with open(dest_path, "w", encoding="utf-8") as f:
-        f.write(output_content) """
-
 
 def generate_page(from_path, template_path, dest_path, basepath):
-    """Generates an HTML page using markdown and a template."""
+    """ Generates an HTML page using markdown and a template."""
 
     print(
         f"Generating page from {from_path} to {dest_path} using {template_path}")
@@ -130,46 +86,22 @@ def generate_page(from_path, template_path, dest_path, basepath):
         markdown_content = f.read()
     with open(template_path, "r", encoding="utf-8") as f:
         template_content = f.read()
-
     html_content = markdown_to_html_node(markdown_content).to_html()
     title = extract_title(markdown_content)
 
-    # Apply basepath corrections
-    html_content = apply_basepath(html_content, basepath)
-
-    # Ensure basepath does not end with a slash
-    clean_basepath = basepath.rstrip('/')
-
-    # Replace template placeholders
+    # First combine template with content
     output_content = template_content.replace(
         "{{ Title }}", title).replace("{{ Content }}", html_content)
 
-    # Debugging: Show a sample link replacement
-    link_start = output_content.find('<link')
-    if link_start >= 0:
-        link_end = output_content.find('>', link_start) + 1
-        print(
-            f"Sample link after replacement: {output_content[link_start:link_end]}")
+    # Then apply basepath to the entire output
+    output_content = apply_basepath(output_content, basepath)
 
-    # Save the generated HTML
+    print(
+        f"Sample link after replacement: {output_content[output_content.find('<link'):output_content.find('>', output_content.find('<link'))+1]}")
+
     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
     with open(dest_path, "w", encoding="utf-8") as f:
         f.write(output_content)
-
-
-def apply_basepath(html_content, basepath):
-    """Apply basepath to all absolute links and src attributes."""
-    clean_basepath = basepath.rstrip('/')
-
-    # Avoid applying basepath multiple times
-    if f'href="{clean_basepath}/' in html_content:
-        return html_content
-
-    # Replace absolute href/src attributes with basepath prepended
-    result = html_content.replace('href="/', f'href="{clean_basepath}/')
-    result = result.replace('src="/', f'src="{clean_basepath}/')
-
-    return result
 
 
 def main():
