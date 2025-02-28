@@ -5,6 +5,7 @@ from md_to_html_node import *
 from htmlnode import *
 import shutil
 import os
+import sys
 
 
 def copy_directory(src: str, dest: str):
@@ -34,7 +35,7 @@ def extract_title(markdown):
     raise ValueError("No H1 title found in markdown")
 
 
-def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir_path: str):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     """Recursively generate pages for all markdown files in a directory."""
     for root, _, files in os.walk(dir_path_content):
         for file in files:
@@ -48,10 +49,10 @@ def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir
                 os.makedirs(os.path.dirname(dest_path), exist_ok=True)
 
                 # Generate the HTML page
-                generate_page(from_path, template_path, dest_path)
+                generate_page(from_path, template_path, dest_path, basepath)
 
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     """Generates an HTML page using markdown and a template."""
 
     print(
@@ -65,6 +66,8 @@ def generate_page(from_path, template_path, dest_path):
 
     output_content = template_content.replace(
         "{{ Title }}", title).replace("{{ Content }}", html_content)
+    output_content = output_content.replace('href="/', f'href="{basepath}')
+    output_content = output_content.replace('src="/', f'src="{basepath}')
 
     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
     with open(dest_path, "w", encoding="utf-8") as f:
@@ -74,13 +77,15 @@ def generate_page(from_path, template_path, dest_path):
 def main():
     template_path = "template.html"
     src = "static"
-    dest = "public"
+    dest = "docs"
+
+    basepath = sys.argv[1] if len(sys.argv) > 1 else "/"
 
     # function deletes public folder contents before copying
     copy_directory(src, dest)
 
     # Generate all pages recursively from the content directory
-    generate_pages_recursive("content", template_path, "public")
+    generate_pages_recursive("content", template_path, "docs", basepath)
 
 
 if __name__ == "__main__":
